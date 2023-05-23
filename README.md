@@ -2,10 +2,12 @@
 
 ## Playlists
 
-- Add playlist model and controller
-- A playlist will be a collection of videos tied to a user
+- Add PUT method for adding videos to a playlist
+- When adding videos, only create a video if not already in DB
+- Allow editing playlist name
+- Allow adding/removing videos from playlist
+- With all these complex operations, start a testing suite
 
 ## User
 
-- Add user model and controller
 - Follow FSO User Admin/auth tutorial for basic implementation

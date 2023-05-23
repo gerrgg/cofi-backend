@@ -1,4 +1,5 @@
 const videosRouter = require("express").Router();
+const axios = require("axios");
 const Video = require("../models/video");
 
 // get all
@@ -26,10 +27,10 @@ videosRouter.post("/", async (request, response, next) => {
   const body = request.body;
 
   try {
-    const result = await fetch(
+    const result = await axios.get(
       `https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=${body.key}&format=json`
     );
-    const data = await result.json();
+    const data = await result.data;
 
     const video = new Video({
       key: body.key,

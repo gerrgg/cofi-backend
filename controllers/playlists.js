@@ -1,26 +1,22 @@
 const playlistsRouter = require("express").Router();
-const axios = require("axios");
 const Playlist = require("../models/playlist");
 const User = require("../models/user");
+const Video = require("../models/video");
 
 // get all
-playlistsRouter.get("/", (request, response) => {
-  Playlist.find({}).then((playlists) => {
-    response.json(playlists);
+playlistsRouter.get("/", async (request, response) => {
+  const playlists = await Playlist.find({}).populate("user", {
+    username: 1,
   });
+  response.json(playlists);
 });
 
 // get single
-playlistsRouter.get("/:id", (request, response, next) => {
-  Playlist.findById(request.params.id)
-    .then((playlist) => {
-      if (playlist) {
-        response.json(playlist);
-      } else {
-        response.status(404).end();
-      }
-    })
-    .catch((error) => next(error));
+playlistsRouter.get("/:id", async (request, response, next) => {
+  const playlist = await Playlist.findById(request.params.id).populate("user", {
+    username: 1,
+  });
+  response.json(playlist);
 });
 
 // create
@@ -42,26 +38,9 @@ playlistsRouter.post("/", async (request, response, next) => {
 });
 
 // delete
-playlistsRouter.delete("/:id", (request, response, next) => {
-  Playlist.findByIdAndRemove(request.params.id)
-    .then(() => {
-      response.status(204).end();
-    })
-    .catch((error) => next(error));
+playlistsRouter.delete("/:id", async (request, response, next) => {
+  await Playlist.findByIdAndRemove(request.params.id);
+  response.status(204).end();
 });
-
-// playlistsRouter.put("/:id", (request, response, next) => {
-//   const body = request.body;
-
-//   const playlist = new Playlist({
-//     key: body.key,
-//   });
-
-//   Playlist.findByIdAndUpdate(request.params.id, playlist, { new: true })
-//     .then((updatedPlaylist) => {
-//       response.json(updatedPlaylist);
-//     })
-//     .catch((error) => next(error));
-// });
 
 module.exports = playlistsRouter;

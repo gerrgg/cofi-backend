@@ -42,12 +42,9 @@ usersRouter.post("/", async (request, response) => {
 });
 
 // delete
-usersRouter.delete("/:id", (request, response, next) => {
-  User.findByIdAndRemove(request.params.id)
-    .then(() => {
-      response.status(204).end();
-    })
-    .catch((error) => next(error));
+usersRouter.delete("/:id", async (request, response, next) => {
+  await User.findByIdAndRemove(request.params.id);
+  response.status(204).end();
 });
 
 module.exports = usersRouter;

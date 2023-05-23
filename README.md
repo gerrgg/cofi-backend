@@ -1,5 +1,10 @@
 # COFI BACKEND
 
+## Videos
+
+- Prevent duplicate videos
+- Keep track of how many playlists a video is in
+
 ## Playlists
 
 - Add PUT method for adding videos to a playlist

@@ -2,7 +2,29 @@ const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    minLength: 4,
+    validate: {
+      validator: function (v) {
+        return !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(v);
+      },
+      message: (props) => `Special characters in username not allowed`,
+    },
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: function (v) {
+        return /^[^@]+@[^@]+\.[^@]+$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid email`,
+    },
+  },
   name: String,
   passwordHash: String,
   playlists: [

@@ -20,4 +20,4 @@ videoSchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("Note", videoSchema);
+module.exports = mongoose.model("Video", videoSchema);

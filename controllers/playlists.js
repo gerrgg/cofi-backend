@@ -1,7 +1,5 @@
 const playlistsRouter = require("express").Router();
 const Playlist = require("../models/playlist");
-const User = require("../models/user");
-const Video = require("../models/video");
 
 // get all
 playlistsRouter.get("/", async (request, response) => {
@@ -23,24 +21,54 @@ playlistsRouter.get("/:id", async (request, response, next) => {
 playlistsRouter.post("/", async (request, response, next) => {
   const body = request.body;
 
-  const user = await User.findById(body.userId);
-
   const playlist = new Playlist({
     name: body.name === undefined ? "New Playlist" : body.name,
-    user: user.id,
+    user: request.user.id,
   });
 
   const savedPlaylist = await playlist.save();
-  user.playlists = user.playlists.concat(savedPlaylist._id);
-  await user.save();
+  request.user.playlists = request.user.playlists.concat(savedPlaylist._id);
+  await request.user.save();
 
-  response.json(savedPlaylist);
+  response.status(201).json(savedPlaylist);
 });
 
 // delete
 playlistsRouter.delete("/:id", async (request, response, next) => {
-  await Playlist.findByIdAndRemove(request.params.id);
-  response.status(204).end();
+  const playlistToDelete = await Playlist.findById(request.params.id).populate(
+    "user"
+  );
+
+  if (playlistToDelete.user.id === request.user.id) {
+    await playlistToDelete.deleteOne();
+    response.status(204).end();
+  } else {
+    response.status(401).end();
+  }
+});
+
+// delete
+playlistsRouter.put("/:id", async (request, response, next) => {
+  const body = request.body;
+
+  const playlistToUpdate = await Playlist.findById(request.params.id).populate(
+    "user"
+  );
+
+  // find the best way to add videos to a playlist, check out how comments were handled in blog project
+
+  if (playlistToUpdate.user.id === request.user.id) {
+    const updatedPlaylist = await Playlist.findByIdAndUpdate(
+      request.params.id,
+      body,
+      {
+        new: true,
+      }
+    );
+    response.status(200).json(updatedPlaylist);
+  } else {
+    response.status(401).end();
+  }
 });
 
 module.exports = playlistsRouter;

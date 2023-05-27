@@ -4,6 +4,7 @@ const app = require("../app");
 const api = supertest(app);
 const Video = require("../models/video");
 const helper = require("./test_helper");
+const Playlist = require("../models/playlist");
 
 beforeEach(async () => {
   await Video.deleteMany();
@@ -26,6 +27,7 @@ describe("when there are videos in db", () => {
     const videos = await helper.getAllVideos();
     expect(videos).toHaveLength(helper.initialVideos.length);
   });
+
   test("the first video has a key set", async () => {
     const videos = await helper.getAllVideos();
     const keys = videos.map((r) => r.key);
@@ -35,13 +37,22 @@ describe("when there are videos in db", () => {
 
 describe("viewing adding videos", () => {
   test("A video can be added", async () => {
+    const token = await helper.getValidToken();
+    const playlist = await helper.createPlaylist({ title: "untitled" }, token);
+
     const newVideo = {
       key: "k3WkJq478To",
+      title: "sometitle",
+      thumbnail: "https://example.com/thumbnail",
+      playlist: playlist.id,
     };
+
+    console.log(playlist, newVideo);
 
     await api
       .post("/api/videos")
       .send(newVideo)
+      .set("Authorization", "Bearer " + token)
       .expect(201)
       .expect("Content-type", /application\/json/);
 
@@ -51,11 +62,16 @@ describe("viewing adding videos", () => {
 
     expect(videos).toHaveLength(helper.initialVideos.length + 1);
     expect(keys).toContain(newVideo.key);
+
+    const updatedPlaylist = await Playlist.findById(playlist.id);
+
+    expect(updatedPlaylist.videos).toHaveLength(playlist.videos.length + 1);
   });
 
   test("An invalid video id will not be added to the DB", async () => {
     const newVideo = {
-      title: "title",
+      title: "sometitle",
+      thumbnail: "https://example.com/thumbnail",
     };
 
     await api

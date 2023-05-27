@@ -11,9 +11,15 @@ playlistsRouter.get("/", async (request, response) => {
 
 // get single
 playlistsRouter.get("/:id", async (request, response, next) => {
-  const playlist = await Playlist.findById(request.params.id).populate("user", {
+  const userPopulateSettings = {
     username: 1,
-  });
+  };
+
+  const videoPopulateSettings = { title: 1, key: 1, thumbnail: 1 };
+
+  const playlist = await Playlist.findById(request.params.id)
+    .populate("user", userPopulateSettings)
+    .populate("videos", videoPopulateSettings);
   response.json(playlist);
 });
 
@@ -47,17 +53,12 @@ playlistsRouter.delete("/:id", async (request, response, next) => {
   }
 });
 
-// delete
 playlistsRouter.put("/:id", async (request, response, next) => {
   const body = request.body;
 
-  const playlistToUpdate = await Playlist.findById(request.params.id).populate(
-    "user"
-  );
+  const playlistToUpdate = await Playlist.findById(request.params.id);
 
-  // find the best way to add videos to a playlist, check out how comments were handled in blog project
-
-  if (playlistToUpdate.user.id === request.user.id) {
+  if (playlistToUpdate.user.toString() === request.user.id) {
     const updatedPlaylist = await Playlist.findByIdAndUpdate(
       request.params.id,
       body,
@@ -65,6 +66,7 @@ playlistsRouter.put("/:id", async (request, response, next) => {
         new: true,
       }
     );
+
     response.status(200).json(updatedPlaylist);
   } else {
     response.status(401).end();

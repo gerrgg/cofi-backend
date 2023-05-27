@@ -7,8 +7,19 @@ const videoSchema = new mongoose.Schema({
     minlength: 11,
     maxLength: 11,
   },
-  title: String,
-  thumbnail: String,
+  playlist: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Playlist",
+  },
+
+  title: {
+    type: String,
+    required: true,
+  },
+  thumbnail: {
+    type: String,
+    required: true,
+  },
   date: { type: Date, default: Date.now },
 });
 

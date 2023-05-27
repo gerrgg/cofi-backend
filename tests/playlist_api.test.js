@@ -86,7 +86,7 @@ describe("when creating playlists", () => {
 });
 
 describe("when updating playlists", () => {
-  test("video name can be updated", async () => {
+  test("Playlist can be updated", async () => {
     const token = await helper.getValidToken();
 
     const newPlaylist = await helper.createPlaylist(

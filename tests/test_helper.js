@@ -10,9 +10,13 @@ const api = supertest(app);
 const initialVideos = [
   {
     key: "jfKfPfyJRdk",
+    title: "sometitle",
+    thumbnail: "https://example.com/thumbnail",
   },
   {
     key: "BrnDlRmW5hs",
+    title: "sometitle 2",
+    thumbnail: "https://example.com/thumbnail2",
   },
 ];
 
@@ -51,7 +55,13 @@ const createUsers = async () => {
 };
 
 const nonExistingId = async () => {
-  const video = new Video({ key: "jfKfPfyJRd1" });
+  const fakeVideo = {
+    key: "jfKfPfyJRdk",
+    title: "sometitle",
+    thumbnail: "https://example.com/thumbnail",
+  };
+
+  const video = new Video(fakeVideo);
   await video.save();
   await video.deleteOne();
 

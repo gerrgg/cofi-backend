@@ -3,9 +3,16 @@ const Playlist = require("../models/playlist");
 
 // get all
 playlistsRouter.get("/", async (request, response) => {
-  const playlists = await Playlist.find({}).populate("user", {
+  const videoPopulateSettings = { title: 1, key: 1, thumbnail: 1 };
+
+  const userPopulateSettings = {
     username: 1,
-  });
+  };
+
+  const playlists = await Playlist.find({})
+    .populate("user", userPopulateSettings)
+    .populate("videos", videoPopulateSettings);
+
   response.json(playlists);
 });
 
@@ -33,8 +40,6 @@ playlistsRouter.post("/", async (request, response, next) => {
   });
 
   const savedPlaylist = await playlist.save();
-  request.user.playlists = request.user.playlists.concat(savedPlaylist._id);
-  await request.user.save();
 
   response.status(201).json(savedPlaylist);
 });

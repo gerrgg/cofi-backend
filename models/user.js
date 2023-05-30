@@ -27,12 +27,6 @@ const userSchema = new mongoose.Schema({
   },
   name: String,
   passwordHash: String,
-  playlists: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Playlist",
-    },
-  ],
 });
 
 userSchema.plugin(uniqueValidator);

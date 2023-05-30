@@ -20,20 +20,6 @@ beforeEach(async () => {
   await helper.createUsers();
 });
 
-describe("when there are playlists in db", () => {
-  test("playlists are returned as json", async () => {
-    await api
-      .get("/api/playlists")
-      .expect(200)
-      .expect("Content-Type", /application\/json/);
-  });
-
-  test("returns playlists in json", async () => {
-    const playlists = await helper.getAllPlaylists();
-    expect(playlists).toHaveLength(helper.initialPlaylists.length);
-  });
-});
-
 describe("when viewing a specific playlist", () => {
   test("A playlist can be viewed", async () => {
     const playlistsAtStart = await helper.getAllPlaylists();

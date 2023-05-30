@@ -4,20 +4,17 @@ const User = require("../models/user");
 
 // get all
 usersRouter.get("/", async (request, response) => {
-  const users = await User.find({}).populate("playlists", {
-    name: 1,
-    videos: 1,
-    date: 1,
-  });
+  const users = await User.find({});
   response.json(users);
 });
 
 usersRouter.get("/:id", async (request, response, next) => {
-  const user = await User.findById(request.params.id).populate("playlists", {
-    name: 1,
-    videos: 1,
-    date: 1,
-  });
+  const user = await User.findById(request.params.id);
+  response.json(user);
+});
+
+usersRouter.get("/:id", async (request, response, next) => {
+  const user = await User.findById(request.params.id);
   response.json(user);
 });
 
@@ -36,6 +33,36 @@ usersRouter.post("/", async (request, response) => {
 
   const savedUser = await user.save();
   response.status(201).json(savedUser);
+});
+
+usersRouter.put("/:id", async (request, response, next) => {
+  const { username, name, password, email } = request.body;
+
+  const user = await User.findById(request.params.id);
+
+  if (request.user && request.user.id === user.id) {
+    if (password) {
+      user.passwordHash = await bcrypt.hash(password, 10);
+    }
+
+    if (username) {
+      user.username = username;
+    }
+
+    if (email) {
+      user.email = email;
+    }
+
+    if (name) {
+      user.name = name;
+    }
+
+    await user.save();
+
+    response.status(201).json(user);
+  } else {
+    response.status(401).end();
+  }
 });
 
 // delete

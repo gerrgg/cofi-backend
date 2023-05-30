@@ -34,7 +34,7 @@ app.use(middleware.tokenExtractor);
 
 app.use("/api/videos", videosRouter);
 app.use("/api/playlists", middleware.userExtractor, playlistsRouter);
-app.use("/api/users", usersRouter);
+app.use("/api/users", middleware.userExtractor, usersRouter);
 app.use("/api/login", loginRouter);
 
 app.use(middleware.unknownEndpoint);

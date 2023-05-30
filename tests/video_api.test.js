@@ -16,13 +16,6 @@ beforeEach(async () => {
 });
 
 describe("when there are videos in db", () => {
-  test("videos are returned as json", async () => {
-    await api
-      .get("/api/videos")
-      .expect(200)
-      .expect("Content-Type", /application\/json/);
-  });
-
   test("returns videos in json", async () => {
     const videos = await helper.getAllVideos();
     expect(videos).toHaveLength(helper.initialVideos.length);

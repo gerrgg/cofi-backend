@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const usersRouter = require("express").Router();
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 
 // get all
 usersRouter.get("/", async (request, response) => {
@@ -35,12 +36,12 @@ usersRouter.post("/", async (request, response) => {
   response.status(201).json(savedUser);
 });
 
-usersRouter.put("/:id", async (request, response, next) => {
+usersRouter.put("/", async (request, response, next) => {
   const { username, name, password, email } = request.body;
 
-  const user = await User.findById(request.params.id);
+  const user = await User.findById(request.user.id);
 
-  if (request.user && request.user.id === user.id) {
+  if (user) {
     if (password) {
       user.passwordHash = await bcrypt.hash(password, 10);
     }
@@ -56,6 +57,8 @@ usersRouter.put("/:id", async (request, response, next) => {
     if (name) {
       user.name = name;
     }
+
+    console.log(user);
 
     await user.save();
 

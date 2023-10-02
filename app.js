@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
 
-app.use("/api/videos", videosRouter);
+app.use("/api/videos", middleware.userExtractor, videosRouter);
 app.use("/api/playlists", middleware.userExtractor, playlistsRouter);
 app.use("/api/users", middleware.userExtractor, usersRouter);
 app.use("/api/login", loginRouter);

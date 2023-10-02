@@ -2,16 +2,13 @@ const bcrypt = require("bcrypt");
 const usersRouter = require("express").Router();
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const Video = require("../models/video");
+const Playlist = require("../models/playlist");
 
 // get all
 usersRouter.get("/", async (request, response) => {
   const users = await User.find({});
   response.json(users);
-});
-
-usersRouter.get("/:id", async (request, response, next) => {
-  const user = await User.findById(request.params.id);
-  response.json(user);
 });
 
 usersRouter.get("/:id", async (request, response, next) => {
@@ -34,6 +31,20 @@ usersRouter.post("/", async (request, response) => {
 
   const savedUser = await user.save();
   response.status(201).json(savedUser);
+});
+
+usersRouter.get("/:id/videos", async (request, response, next) => {
+  const user = await User.findOne({ username: request.params.id });
+
+  const userVideos = await Video.find({
+    user: user.id,
+  });
+
+  if (userVideos) {
+    response.status(201).json(userVideos);
+  } else {
+    response.status(401).end();
+  }
 });
 
 usersRouter.put("/", async (request, response, next) => {

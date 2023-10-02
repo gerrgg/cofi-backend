@@ -1,4 +1,5 @@
 const playlistsRouter = require("express").Router();
+
 const Playlist = require("../models/playlist");
 
 // get all
@@ -50,7 +51,7 @@ playlistsRouter.delete("/:id", async (request, response, next) => {
     "user"
   );
 
-  if (playlistToDelete.user.id === request.user.id) {
+  if (request.user && playlistToDelete.user.id === request.user.id) {
     await playlistToDelete.deleteOne();
     response.status(204).end();
   } else {

@@ -7,11 +7,11 @@ const videoSchema = new mongoose.Schema({
     minlength: 11,
     maxLength: 11,
   },
-  playlist: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Playlist",
+    ref: "User",
+    required: true,
   },
-
   title: {
     type: String,
     required: true,

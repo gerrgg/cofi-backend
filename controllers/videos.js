@@ -19,20 +19,16 @@ videosRouter.get("/:id", async (request, response, next) => {
 videosRouter.post("/", async (request, response, next) => {
   const body = request.body;
 
+  console.log(request.user);
+
   const video = new Video({
     key: body.key,
     title: body.title,
     thumbnail: body.thumbnail,
-    playlist: body.playlist,
+    user: request.user.id,
   });
 
   const savedVideo = await video.save();
-
-  const playlist = await Playlist.findById(savedVideo.playlist.toString());
-
-  playlist.videos = playlist.videos.concat(savedVideo);
-
-  await playlist.save();
 
   response.status(201).json(savedVideo);
 });
